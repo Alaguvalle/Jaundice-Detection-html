@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAUNDICE DETECTION</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h1>JAUNDICE DETECTION</h1>
+
+<table id="jaundiceTable">
+    <thead>
+        <tr>
+            <th>BPM</th>
+            <th>SPO2</th>
+            <th>TEMPERATURE</th>
+            <th>R</th>
+            <th>G</th>
+            <th>B</th>
+            <th>RESULT</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Data will be inserted here dynamically using JavaScript -->
+    </tbody>
+</table>
+
+<script>
+    const apiKey = "3AI7QTBG3LZM6OHR";
+    const channelID = "593609";
+
+    // Function to fetch and update data
+    function fetchDataAndUpdateTable() {
+        fetch(`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${apiKey}&results=1`)
+            .then(response => response.json())
+            .then(data => {
+                const fields = ['field1', 'field2', 'field3', 'field4', 'field5', 'field6', 'field7'];
+                const rowData = fields.map(field => data.feeds[0][field]);
+                updateTable(rowData);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Function to update the table with data
+    function updateTable(data) {
+        const tableBody = document.querySelector("#jaundiceTable tbody");
+        const row = document.createElement("tr");
+
+        data.forEach(value => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+        });
+
+        tableBody.innerHTML = ''; // Clear existing rows
+        tableBody.appendChild(row);
+    }
+
+    // Fetch and update data initially
+    fetchDataAndUpdateTable();
+
+    // Set interval to fetch and update data every 5 seconds (adjust as needed)
+    setInterval(fetchDataAndUpdateTable, 5000);
+</script>
+
+</body>
+</html>
